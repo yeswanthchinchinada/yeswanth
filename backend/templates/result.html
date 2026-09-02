@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<title>Voting Results</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    body {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #0f172a, #1e3a8a);
+        color: white;
+    }
+
+    .container {
+        width: 90%;
+        max-width: 1000px;
+        margin: auto;
+        padding: 40px 0;
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 35px;
+    }
+
+    .election-card {
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 25px;
+    }
+
+    .election-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    .summary {
+        background: rgba(255,255,255,0.08);
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    .summary p {
+        margin: 5px 0;
+    }
+
+    .candidate {
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: 10px;
+        padding: 18px;
+        margin-bottom: 12px;
+    }
+
+    .candidate-name {
+        font-size: 19px;
+        font-weight: bold;
+    }
+
+    .symbol {
+        font-size: 28px;
+        margin-right: 10px;
+    }
+
+    .candidate-info {
+        margin-top: 8px;
+        opacity: 0.9;
+    }
+
+    .votes {
+        margin-top: 8px;
+        font-size: 17px;
+        font-weight: bold;
+    }
+
+    .winner {
+        margin-top: 20px;
+        padding: 18px;
+        background: rgba(34, 197, 94, 0.2);
+        border: 1px solid rgba(34, 197, 94, 0.5);
+        border-radius: 10px;
+    }
+
+    .winner-title {
+        font-size: 19px;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+
+    .winner-name {
+        font-size: 21px;
+        font-weight: bold;
+    }
+
+    .back-btn {
+        display: block;
+        width: fit-content;
+        margin: 35px auto 0;
+        padding: 12px 25px;
+        background: #2563eb;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+    }
+
+    .empty {
+        text-align: center;
+        padding: 30px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 15px;
+    }
+</style>
+
+
+</head>
+
+<body>
+
+<div class="container">
+
+
+<h1>📊 Voting Results</h1>
+
+{% if elections %}
+
+    {% for election in elections %}
+
+        <div class="election-card">
+
+            <div class="election-title">
+                {{ election.id }}. {{ election.name }}
+            </div>
+
+            <div class="summary">
+                <p>
+                    🗳️ <strong>Total Votes:</strong>
+                    {{ election.total_votes }}
+                </p>
+            </div>
+
+
+            {% if election.candidates %}
+
+                {% for candidate in election.candidates %}
+
+                    <div class="candidate">
+
+                        {% if election.id == 1 %}
+
+                            {% if candidate[1] == "Krishnamraju" %}
+                                <span class="symbol">🥛</span>
+                            {% elif candidate[1] == "Karthik" %}
+                                <span class="symbol">🚲</span>
+                            {% elif candidate[1] == "Avinash" %}
+                                <span class="symbol">🪭</span>
+                            {% endif %}
+
+                        {% elif election.id == 2 %}
+
+                            {% if candidate[1] == "Yeswanth" %}
+                                <span class="symbol">📣</span>
+                            {% elif candidate[1] == "Harish" %}
+                                <span class="symbol">⚽</span>
+                            {% elif candidate[1] == "Sai Babu" %}
+                                <span class="symbol">🏏</span>
+                            {% endif %}
+
+                        {% elif election.id == 3 %}
+
+                            {% if candidate[1] == "Vinay" %}
+                                <span class="symbol">📋</span>
+                            {% elif candidate[1] == "Teja" %}
+                                <span class="symbol">🖊️</span>
+                            {% elif candidate[1] == "Parmesh" %}
+                                <span class="symbol">📖</span>
+                            {% endif %}
+
+                        {% endif %}
+
+                        <span class="candidate-name">
+                            {{ candidate[1] }}
+                        </span>
+
+                        <div class="candidate-info">
+                            Candidate ID: {{ candidate[0] }}
+                        </div>
+
+                        <div class="votes">
+                            🗳️ Votes: {{ candidate[2] }}
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+
+                {% if election.winner %}
+
+                    <div class="winner">
+
+                        <div class="winner-title">
+                            🏆 Winner
+                        </div>
+
+                        <div class="winner-name">
+                            {{ election.winner[1] }}
+                        </div>
+
+                        <div class="candidate-info">
+                            Votes: {{ election.winner[2] }}
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+            {% else %}
+
+                <div class="empty">
+                    No candidates available.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    {% endfor %}
+
+{% else %}
+
+    <div class="empty">
+        No voting results available.
+    </div>
+
+{% endif %}
+
+
+<a href="{{ url_for('index') }}" class="back-btn">
+    ← Back to Home
+</a>
+
+
+</div>
+
+</body>
+</html>

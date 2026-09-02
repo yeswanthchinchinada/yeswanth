@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Account - Blockchain Voting System</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            background: linear-gradient(
+                135deg,
+                #0f172a,
+                #1e3a8a,
+                #2563eb
+            );
+        }
+
+        .register-container {
+            width: 430px;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+
+            box-shadow:
+                0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .icon {
+            width: 70px;
+            height: 70px;
+
+            margin: 0 auto 18px;
+
+            border-radius: 50%;
+            background: #2563eb;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            font-size: 32px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #111827;
+            font-size: 26px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+
+            color: #374151;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 13px;
+
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+
+            font-size: 15px;
+            outline: none;
+
+            background: white;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #2563eb;
+
+            box-shadow:
+                0 0 0 2px rgba(37,99,235,0.1);
+        }
+
+        .password-box {
+            position: relative;
+        }
+
+        .password-box input {
+            padding-right: 65px;
+        }
+
+        .show-password {
+            position: absolute;
+
+            right: 12px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            color: #2563eb;
+            font-size: 12px;
+
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .password-rules {
+            margin-top: 10px;
+            padding: 12px;
+
+            background: #f8fafc;
+
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+
+            text-align: left;
+            font-size: 12px;
+        }
+
+        .password-rules-title {
+            color: #374151;
+
+            font-size: 13px;
+            font-weight: bold;
+
+            margin-bottom: 8px;
+        }
+
+        .rule {
+            margin: 5px 0;
+            color: #6b7280;
+        }
+
+        .rule.valid {
+            color: #16a34a;
+            font-weight: bold;
+        }
+
+        .check {
+            display: inline-block;
+            width: 18px;
+        }
+
+        .create-btn {
+            width: 100%;
+            padding: 13px;
+
+            border: none;
+            border-radius: 8px;
+
+            background: #2563eb;
+            color: white;
+
+            font-size: 16px;
+            font-weight: bold;
+
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .create-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .message {
+            text-align: center;
+
+            margin-top: 15px;
+
+            font-size: 14px;
+            min-height: 20px;
+        }
+
+        .back-login {
+            text-align: center;
+
+            margin-top: 20px;
+
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .back-login a {
+            color: #2563eb;
+
+            text-decoration: none;
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        .back-login a:hover {
+            text-decoration: underline;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="register-container">
+
+    <div class="icon">
+        🗳️
+    </div>
+
+    <h1>
+        Create Account
+    </h1>
+
+    <p class="subtitle">
+        Create your secure voting account
+    </p>
+
+    <form onsubmit="createAccount(event)">
+
+        <!-- ACCOUNT TYPE -->
+
+        <div class="input-group">
+
+            <label for="userType">
+                Account Type
+            </label>
+
+            <select
+                id="userType"
+                onchange="handleUserType()"
+                required>
+
+                <option value="">
+                    Select Student or Faculty
+                </option>
+
+                <option value="Student">
+                    Student
+                </option>
+
+                <option value="Faculty">
+                    Faculty
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- NAME -->
+
+        <div class="input-group">
+
+            <label for="name">
+                Name
+            </label>
+
+            <input
+                type="text"
+                id="name"
+                placeholder="Enter your full name"
+                required
+            >
+
+        </div>
+
+
+        <!-- REGISTRATION NUMBER -->
+
+        <div
+            class="input-group hidden"
+            id="registrationGroup">
+
+            <label for="registrationNumber">
+                Registration Number
+            </label>
+
+            <input
+                type="text"
+                id="registrationNumber"
+                placeholder="Enter your registration number"
+            >
+
+        </div>
+
+
+        <!-- DEPARTMENT -->
+
+        <div class="input-group">
+
+            <label for="department">
+                Department
+            </label>
+
+            <input
+                type="text"
+                id="department"
+                placeholder="Enter your department"
+                required
+            >
+
+        </div>
+
+
+        <!-- PHONE NUMBER -->
+
+        <div class="input-group">
+
+            <label for="phone">
+                Phone Number
+            </label>
+
+            <input
+                type="tel"
+                id="phone"
+                placeholder="Enter your 10-digit phone number"
+                maxlength="10"
+                required
+            >
+
+        </div>
+
+
+        <!-- PASSWORD -->
+
+        <div class="input-group">
+
+            <label for="password">
+                Create Password
+            </label>
+
+            <div class="password-box">
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Create your password"
+                    required
+                    oninput="checkPassword()"
+                >
+
+                <span
+                    class="show-password"
+                    id="showText"
+                    onclick="togglePassword()">
+
+                    Show
+
+                </span>
+
+            </div>
+
+
+            <div class="password-rules">
+
+                <div class="password-rules-title">
+                    Password must contain:
+                </div>
+
+                <div
+                    class="rule"
+                    id="lengthRule">
+
+                    <span class="check">✗</span>
+
+                    At least 8 characters
+
+                </div>
+
+                <div
+                    class="rule"
+                    id="upperRule">
+
+                    <span class="check">✗</span>
+
+                    1 uppercase letter (A-Z)
+
+                </div>
+
+                <div
+                    class="rule"
+                    id="lowerRule">
+
+                    <span class="check">✗</span>
+
+                    1 lowercase letter (a-z)
+
+                </div>
+
+                <div
+                    class="rule"
+                    id="numberRule">
+
+                    <span class="check">✗</span>
+
+                    1 number (0-9)
+
+                </div>
+
+                <div
+                    class="rule"
+                    id="specialRule">
+
+                    <span class="check">✗</span>
+
+                    1 special character (@, #, $, %, etc.)
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <button
+            type="submit"
+            class="create-btn">
+
+            Create Account
+
+        </button>
+
+    </form>
+
+
+    <div
+        class="message"
+        id="message">
+    </div>
+
+
+    <div class="back-login">
+
+        Already have an account?
+
+        <a onclick="goToLogin()">
+            Login
+        </a>
+
+    </div>
+
+</div>
+
+
+<script>
+
+function handleUserType() {
+
+    const userType =
+        document.getElementById("userType").value;
+
+    const registrationGroup =
+        document.getElementById("registrationGroup");
+
+    const registrationNumber =
+        document.getElementById("registrationNumber");
+
+
+    if (userType === "Student") {
+
+        registrationGroup.classList.remove("hidden");
+
+        registrationNumber.required = true;
+
+    }
+
+    else {
+
+        registrationGroup.classList.add("hidden");
+
+        registrationNumber.required = false;
+
+        registrationNumber.value = "";
+
+    }
+
+}
+
+
+function togglePassword() {
+
+    const password =
+        document.getElementById("password");
+
+    const showText =
+        document.getElementById("showText");
+
+
+    if (password.type === "password") {
+
+        password.type = "text";
+
+        showText.innerText = "Hide";
+
+    }
+
+    else {
+
+        password.type = "password";
+
+        showText.innerText = "Show";
+
+    }
+
+}
+
+
+function checkPassword() {
+
+    const password =
+        document.getElementById("password").value;
+
+
+    updateRule(
+        "lengthRule",
+        password.length >= 8
+    );
+
+    updateRule(
+        "upperRule",
+        /[A-Z]/.test(password)
+    );
+
+    updateRule(
+        "lowerRule",
+        /[a-z]/.test(password)
+    );
+
+    updateRule(
+        "numberRule",
+        /[0-9]/.test(password)
+    );
+
+    updateRule(
+        "specialRule",
+        /[@#$%^&*!]/.test(password)
+    );
+
+}
+
+
+function updateRule(id, valid) {
+
+    const rule =
+        document.getElementById(id);
+
+    const check =
+        rule.querySelector(".check");
+
+
+    if (valid) {
+
+        rule.classList.add("valid");
+
+        check.innerText = "✓";
+
+    }
+
+    else {
+
+        rule.classList.remove("valid");
+
+        check.innerText = "✗";
+
+    }
+
+}
+
+
+function createAccount(event) {
+
+    event.preventDefault();
+
+
+    const userType =
+        document.getElementById("userType").value;
+
+    const name =
+        document.getElementById("name").value.trim();
+
+    const registrationNumber =
+        document.getElementById("registrationNumber").value.trim();
+
+    const department =
+        document.getElementById("department").value.trim();
+
+    const phone =
+        document.getElementById("phone").value.trim();
+
+    const password =
+        document.getElementById("password").value;
+
+
+    const message =
+        document.getElementById("message");
+
+
+    // USER TYPE
+
+    if (
+        userType !== "Student" &&
+        userType !== "Faculty"
+    ) {
+
+        message.style.color = "red";
+
+        message.innerText =
+            "Please select Student or Faculty.";
+
+        return;
+
+    }
+
+
+    // NAME
+
+    if (!name) {
+
+        message.style.color = "red";
+
+        message.innerText =
+            "Please enter your name.";
+
+        return;
+
+    }
+
+
+    // REGISTRATION NUMBER
+
+    if (
+        userType === "Student" &&
+        !registrationNumber
+    ) {
+
+        message.style.color = "red";
+
+        message.innerText =
+            "Please enter your registration number.";
+
+        return;
+
+    }
+
+
+    // DEPARTMENT
+
+    if (!department) {
+
+        message.style.color = "red";
+
+        message.innerText =
+            "Please enter your department.";
+
+        return;
+
+    }
+
+
+    // PHONE
+
+    if (!/^[0-9]{10}$/.test(phone)) {
+
+        message.style.color = "red";
+
+        message.innerText =
+            "Please enter a valid 10-digit phone number.";
+
+        return;
+
+    }
+
+
+    // PASSWORD
+
+    const passwordPattern =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&*!]).{8,}$/;
+
+
+    if (!passwordPattern.test(password)) {
+
+        message.style.color = "red";
+
+        message.innerText =
+            "Please satisfy all password requirements.";
+
+        return;
+
+    }
+
+
+    // SEND DATA TO FLASK
+
+    fetch("/register", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+
+            user_type: userType,
+
+            name: name,
+
+            registration_number:
+                userType === "Student"
+                    ? registrationNumber
+                    : "",
+
+            department: department,
+
+            phone: phone,
+
+            password: password
+
+        })
+
+    })
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        if (data.success) {
+
+            message.style.color = "green";
+
+            message.innerText =
+                "Account created successfully!";
+
+
+            setTimeout(function() {
+
+                window.location.href = "/";
+
+            }, 1000);
+
+        }
+
+        else {
+
+            message.style.color = "red";
+
+            message.innerText =
+                data.message;
+
+        }
+
+    })
+
+    .catch(error => {
+
+        console.error(error);
+
+        message.style.color = "red";
+
+        message.innerText =
+            "Unable to connect to server.";
+
+    });
+
+}
+
+
+function goToLogin() {
+
+    window.location.href = "/";
+
+}
+
+</script>
+
+</body>
+
+</html>

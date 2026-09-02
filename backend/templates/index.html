@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Blockchain Voting System</title>
+
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+
+        body {
+
+            min-height: 100vh;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            background: linear-gradient(
+                135deg,
+                #0f172a,
+                #1e3a8a,
+                #2563eb
+            );
+
+        }
+
+
+        .login-container {
+
+            width: 430px;
+
+            background: white;
+
+            padding: 40px;
+
+            border-radius: 20px;
+
+            box-shadow:
+                0 15px 40px rgba(0, 0, 0, 0.3);
+
+            text-align: center;
+
+        }
+
+
+        .icon {
+
+            width: 75px;
+
+            height: 75px;
+
+            margin: 0 auto 20px;
+
+            border-radius: 50%;
+
+            background: #2563eb;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            font-size: 35px;
+
+        }
+
+
+        h1 {
+
+            color: #111827;
+
+            font-size: 27px;
+
+            margin-bottom: 8px;
+
+        }
+
+
+        .subtitle {
+
+            color: #6b7280;
+
+            font-size: 14px;
+
+            margin-bottom: 28px;
+
+        }
+
+
+        .input-group {
+
+            text-align: left;
+
+            margin-bottom: 18px;
+
+        }
+
+
+        label {
+
+            display: block;
+
+            margin-bottom: 8px;
+
+            color: #374151;
+
+            font-size: 14px;
+
+            font-weight: bold;
+
+        }
+
+
+        input {
+
+            width: 100%;
+
+            padding: 13px;
+
+            border: 1px solid #d1d5db;
+
+            border-radius: 8px;
+
+            font-size: 15px;
+
+            outline: none;
+
+        }
+
+
+        input:focus {
+
+            border-color: #2563eb;
+
+            box-shadow:
+                0 0 0 2px rgba(37, 99, 235, 0.1);
+
+        }
+
+
+        .password-box {
+
+            position: relative;
+
+        }
+
+
+        .password-box input {
+
+            padding-right: 65px;
+
+        }
+
+
+        .show-password {
+
+            position: absolute;
+
+            right: 12px;
+
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            color: #2563eb;
+
+            font-size: 12px;
+
+            cursor: pointer;
+
+            font-weight: bold;
+
+        }
+
+
+        .login-btn {
+
+            width: 100%;
+
+            padding: 13px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background: #2563eb;
+
+            color: white;
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            margin-top: 5px;
+
+        }
+
+
+        .login-btn:hover {
+
+            background: #1d4ed8;
+
+        }
+
+
+        .links {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            margin-top: 18px;
+
+            font-size: 13px;
+
+        }
+
+
+        .links a {
+
+            color: #2563eb;
+
+            text-decoration: none;
+
+            cursor: pointer;
+
+        }
+
+
+        .links a:hover {
+
+            text-decoration: underline;
+
+        }
+
+
+        .admin-link {
+
+            display: inline-block;
+
+            margin-top: 18px;
+
+            color: #7c3aed;
+
+            text-decoration: none;
+
+            font-size: 13px;
+
+            font-weight: bold;
+
+        }
+
+
+        .admin-link:hover {
+
+            text-decoration: underline;
+
+        }
+
+
+        .message {
+
+            margin-top: 18px;
+
+            font-size: 14px;
+
+            min-height: 20px;
+
+        }
+
+
+        .security {
+
+            margin-top: 25px;
+
+            padding-top: 15px;
+
+            border-top: 1px solid #e5e7eb;
+
+            color: #6b7280;
+
+            font-size: 12px;
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="login-container">
+
+
+    <!-- ICON -->
+
+    <div class="icon">
+
+        🗳️
+
+    </div>
+
+
+    <!-- TITLE -->
+
+    <h1>
+
+        Blockchain Voting System
+
+    </h1>
+
+
+    <p class="subtitle">
+
+        Secure and Transparent Digital Voting
+
+    </p>
+
+
+    <!-- LOGIN FORM -->
+
+    <form onsubmit="login(event)">
+
+
+        <!-- PHONE NUMBER -->
+
+        <div class="input-group">
+
+            <label for="phone">
+
+                Phone Number
+
+            </label>
+
+
+            <input
+                type="tel"
+                id="phone"
+                placeholder="Enter your 10-digit phone number"
+                maxlength="10"
+                required
+            >
+
+        </div>
+
+
+        <!-- PASSWORD -->
+
+        <div class="input-group">
+
+            <label for="password">
+
+                Password
+
+            </label>
+
+
+            <div class="password-box">
+
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Enter your password"
+                    required
+                >
+
+
+                <span
+                    class="show-password"
+                    id="showText"
+                    onclick="togglePassword()">
+
+                    Show
+
+                </span>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- LOGIN BUTTON -->
+
+        <button
+            type="submit"
+            class="login-btn">
+
+            Login
+
+        </button>
+
+
+    </form>
+
+
+    <!-- CREATE / FORGOT -->
+
+    <div class="links">
+
+
+        <a onclick="createAccount()">
+
+            Create Account
+
+        </a>
+
+
+        <a onclick="forgotPassword()">
+
+            Forgot Password?
+
+        </a>
+
+
+    </div>
+
+
+    <!-- ADMIN PANEL -->
+
+    <a
+        href="/admin"
+        class="admin-link">
+
+        👨‍💼 Admin Panel
+
+    </a>
+
+
+    <!-- MESSAGE -->
+
+    <div
+        class="message"
+        id="message">
+
+    </div>
+
+
+    <!-- SECURITY MESSAGE -->
+
+    <div class="security">
+
+        🔒 Your vote is secured using Blockchain Technology
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+
+/* =================================
+   SHOW / HIDE PASSWORD
+   ================================= */
+
+function togglePassword() {
+
+
+    const password =
+        document.getElementById("password");
+
+
+    const showText =
+        document.getElementById("showText");
+
+
+    if (password.type === "password") {
+
+
+        password.type = "text";
+
+
+        showText.innerText = "Hide";
+
+
+    }
+
+    else {
+
+
+        password.type = "password";
+
+
+        showText.innerText = "Show";
+
+
+    }
+
+}
+
+
+
+/* =================================
+   LOGIN
+   ================================= */
+
+function login(event) {
+
+
+    event.preventDefault();
+
+
+    const phone =
+        document.getElementById("phone").value.trim();
+
+
+    const password =
+        document.getElementById("password").value;
+
+
+    const message =
+        document.getElementById("message");
+
+
+
+    /* PHONE VALIDATION */
+
+    if (!/^[0-9]{10}$/.test(phone)) {
+
+
+        message.style.color = "red";
+
+
+        message.innerText =
+            "Please enter a valid 10-digit phone number.";
+
+
+        return;
+
+    }
+
+
+
+    /* PASSWORD EMPTY CHECK */
+
+    if (password.length === 0) {
+
+
+        message.style.color = "red";
+
+
+        message.innerText =
+            "Please enter your password.";
+
+
+        return;
+
+    }
+
+
+
+    /* SEND LOGIN DATA TO FLASK */
+
+    fetch("/login", {
+
+
+        method: "POST",
+
+
+        headers: {
+
+            "Content-Type":
+                "application/json"
+
+        },
+
+
+        body: JSON.stringify({
+
+            phone: phone,
+
+            password: password
+
+        })
+
+
+    })
+
+
+    .then(response => response.json())
+
+
+    .then(data => {
+
+
+        if (data.success) {
+
+
+            message.style.color = "green";
+
+
+            message.innerText =
+                "Login successful! Redirecting...";
+
+
+            setTimeout(function() {
+
+
+                window.location.href =
+                    "/vote";
+
+
+            }, 800);
+
+
+        }
+
+        else {
+
+
+            message.style.color = "red";
+
+
+            message.innerText =
+                data.message;
+
+        }
+
+
+    })
+
+
+    .catch(error => {
+
+
+        console.error(error);
+
+
+        message.style.color = "red";
+
+
+        message.innerText =
+            "Unable to connect to server.";
+
+
+    });
+
+}
+
+
+
+/* =================================
+   CREATE ACCOUNT
+   ================================= */
+
+function createAccount() {
+
+
+    window.location.href =
+        "/register";
+
+}
+
+
+
+/* =================================
+   FORGOT PASSWORD
+   ================================= */
+
+function forgotPassword() {
+
+
+    window.location.href =
+        "/forgot-password";
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Login - Blockchain Voting</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+
+            min-height: 100vh;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            background: linear-gradient(
+                135deg,
+                #111827,
+                #312e81,
+                #4f46e5
+            );
+
+        }
+
+        .admin-container {
+
+            width: 420px;
+
+            background: white;
+
+            padding: 40px;
+
+            border-radius: 20px;
+
+            box-shadow:
+                0 15px 40px rgba(0, 0, 0, 0.3);
+
+            text-align: center;
+
+        }
+
+        .icon {
+
+            width: 75px;
+
+            height: 75px;
+
+            margin: 0 auto 20px;
+
+            border-radius: 50%;
+
+            background: #7c3aed;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            font-size: 35px;
+
+        }
+
+        h1 {
+
+            color: #111827;
+
+            font-size: 27px;
+
+            margin-bottom: 8px;
+
+        }
+
+        .subtitle {
+
+            color: #6b7280;
+
+            font-size: 14px;
+
+            margin-bottom: 28px;
+
+        }
+
+        .input-group {
+
+            text-align: left;
+
+            margin-bottom: 18px;
+
+        }
+
+        label {
+
+            display: block;
+
+            margin-bottom: 8px;
+
+            color: #374151;
+
+            font-size: 14px;
+
+            font-weight: bold;
+
+        }
+
+        input {
+
+            width: 100%;
+
+            padding: 13px;
+
+            border: 1px solid #d1d5db;
+
+            border-radius: 8px;
+
+            font-size: 15px;
+
+            outline: none;
+
+        }
+
+        input:focus {
+
+            border-color: #7c3aed;
+
+            box-shadow:
+                0 0 0 2px rgba(124, 58, 237, 0.1);
+
+        }
+
+        .password-box {
+
+            position: relative;
+
+        }
+
+        .password-box input {
+
+            padding-right: 65px;
+
+        }
+
+        .show-password {
+
+            position: absolute;
+
+            right: 12px;
+
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            color: #7c3aed;
+
+            font-size: 12px;
+
+            cursor: pointer;
+
+            font-weight: bold;
+
+        }
+
+        .login-btn {
+
+            width: 100%;
+
+            padding: 13px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background: #7c3aed;
+
+            color: white;
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            margin-top: 5px;
+
+        }
+
+        .login-btn:hover {
+
+            background: #6d28d9;
+
+        }
+
+        .back-link {
+
+            display: inline-block;
+
+            margin-top: 20px;
+
+            color: #2563eb;
+
+            text-decoration: none;
+
+            font-size: 13px;
+
+        }
+
+        .back-link:hover {
+
+            text-decoration: underline;
+
+        }
+
+        .message {
+
+            margin-top: 18px;
+
+            font-size: 14px;
+
+            min-height: 20px;
+
+        }
+
+        .security {
+
+            margin-top: 25px;
+
+            padding-top: 15px;
+
+            border-top: 1px solid #e5e7eb;
+
+            color: #6b7280;
+
+            font-size: 12px;
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="admin-container">
+
+
+    <div class="icon">
+
+        👨‍💼
+
+    </div>
+
+
+    <h1>
+
+        Admin Login
+
+    </h1>
+
+
+    <p class="subtitle">
+
+        Blockchain Voting System Administration
+
+    </p>
+
+
+    <form onsubmit="adminLogin(event)">
+
+
+        <div class="input-group">
+
+            <label for="username">
+
+                Admin Username
+
+            </label>
+
+            <input
+                type="text"
+                id="username"
+                placeholder="Enter admin username"
+                required
+            >
+
+        </div>
+
+
+        <div class="input-group">
+
+            <label for="password">
+
+                Admin Password
+
+            </label>
+
+
+            <div class="password-box">
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Enter admin password"
+                    required
+                >
+
+                <span
+                    class="show-password"
+                    id="showText"
+                    onclick="togglePassword()">
+
+                    Show
+
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <button
+            type="submit"
+            class="login-btn">
+
+            Admin Login
+
+        </button>
+
+
+    </form>
+
+
+    <a
+        href="/"
+        class="back-link">
+
+        ← Back to User Login
+
+    </a>
+
+
+    <div
+        class="message"
+        id="message">
+
+    </div>
+
+
+    <div class="security">
+
+        🔒 Admin access is restricted to authorized personnel only.
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+
+function togglePassword() {
+
+    const password =
+        document.getElementById("password");
+
+    const showText =
+        document.getElementById("showText");
+
+
+    if (password.type === "password") {
+
+        password.type = "text";
+
+        showText.innerText = "Hide";
+
+    }
+
+    else {
+
+        password.type = "password";
+
+        showText.innerText = "Show";
+
+    }
+
+}
+
+
+function adminLogin(event) {
+
+    event.preventDefault();
+
+
+    const username =
+        document.getElementById("username")
+        .value
+        .trim();
+
+
+    const password =
+        document.getElementById("password")
+        .value;
+
+
+    const message =
+        document.getElementById("message");
+
+
+    fetch("/admin-login", {
+
+        method: "POST",
+
+        headers: {
+
+            "Content-Type":
+                "application/json"
+
+        },
+
+        body: JSON.stringify({
+
+            username: username,
+
+            password: password
+
+        })
+
+    })
+
+
+    .then(response => response.json())
+
+
+    .then(data => {
+
+        if (data.success) {
+
+            message.style.color = "green";
+
+            message.innerText =
+                "Admin login successful! Redirecting...";
+
+
+            setTimeout(function() {
+
+                window.location.href =
+                    "/admin";
+
+            }, 800);
+
+        }
+
+        else {
+
+            message.style.color = "red";
+
+            message.innerText =
+                data.message;
+
+        }
+
+    })
+
+
+    .catch(error => {
+
+        console.error(error);
+
+        message.style.color = "red";
+
+        message.innerText =
+            "Unable to connect to server.";
+
+    });
+
+}
+
+</script>
+
+
+</body>
+
+</html>

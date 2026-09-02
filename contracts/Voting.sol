@@ -1,0 +1,378 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract Voting {
+
+    struct Candidate {
+        uint256 id;
+        string name;
+        uint256 voteCount;
+    }
+
+    struct Election {
+        string name;
+        bool started;
+        bool ended;
+        uint256 candidateCount;
+        mapping(uint256 => Candidate) candidates;
+        mapping(address => bool) hasVoted;
+    }
+
+    address public owner;
+
+    uint256 public constant ELECTION_COUNT = 3;
+
+    mapping(uint256 => Election) private elections;
+
+    event CandidateAdded(
+        uint256 electionId,
+        uint256 candidateId,
+        string name
+    );
+
+    event VotingStarted(uint256 electionId);
+
+    event VotingEnded(uint256 electionId);
+
+    event VoteCast(
+        uint256 electionId,
+        address voter,
+        uint256 candidateId
+    );
+
+
+    constructor() {
+
+        owner = msg.sender;
+
+        elections[1].name =
+            "Student Council President";
+
+        elections[2].name =
+            "Sports Secretary";
+
+        elections[3].name =
+            "Academic Secretary";
+    }
+
+
+    modifier onlyOwner() {
+
+        require(
+            msg.sender == owner,
+            "Only owner can perform this action"
+        );
+
+        _;
+    }
+
+
+    modifier validElection(
+        uint256 _electionId
+    ) {
+
+        require(
+            _electionId >= 1 &&
+            _electionId <= ELECTION_COUNT,
+            "Invalid election"
+        );
+
+        _;
+    }
+
+
+    modifier votingIsActive(
+        uint256 _electionId
+    ) {
+
+        require(
+            elections[_electionId].started,
+            "Voting has not started"
+        );
+
+        require(
+            !elections[_electionId].ended,
+            "Voting has ended"
+        );
+
+        _;
+    }
+
+
+    function addCandidate(
+        uint256 _electionId,
+        string memory _name
+    )
+        public
+        onlyOwner
+        validElection(_electionId)
+    {
+
+        require(
+            !elections[_electionId].started,
+            "Cannot add candidate after voting starts"
+        );
+
+        require(
+            bytes(_name).length > 0,
+            "Candidate name cannot be empty"
+        );
+
+
+        elections[_electionId].candidateCount++;
+
+
+        uint256 candidateId =
+            elections[_electionId].candidateCount;
+
+
+        elections[_electionId].candidates[candidateId] =
+            Candidate(
+                candidateId,
+                _name,
+                0
+            );
+
+
+        emit CandidateAdded(
+            _electionId,
+            candidateId,
+            _name
+        );
+    }
+
+
+    function startVoting(
+        uint256 _electionId
+    )
+        public
+        onlyOwner
+        validElection(_electionId)
+    {
+
+        require(
+            elections[_electionId].candidateCount > 0,
+            "Add candidates first"
+        );
+
+        require(
+            !elections[_electionId].started,
+            "Voting already started"
+        );
+
+
+        elections[_electionId].started =
+            true;
+
+
+        emit VotingStarted(
+            _electionId
+        );
+    }
+
+
+    function vote(
+        uint256 _electionId,
+        uint256 _candidateId
+    )
+        public
+        validElection(_electionId)
+        votingIsActive(_electionId)
+    {
+
+        require(
+            !elections[_electionId].hasVoted[msg.sender],
+            "You have already voted in this election"
+        );
+
+
+        require(
+            _candidateId > 0 &&
+            _candidateId <=
+            elections[_electionId].candidateCount,
+            "Invalid candidate"
+        );
+
+
+        elections[_electionId]
+            .hasVoted[msg.sender] = true;
+
+
+        elections[_electionId]
+            .candidates[_candidateId]
+            .voteCount++;
+
+
+        emit VoteCast(
+            _electionId,
+            msg.sender,
+            _candidateId
+        );
+    }
+
+
+    function endVoting(
+        uint256 _electionId
+    )
+        public
+        onlyOwner
+        validElection(_electionId)
+    {
+
+        require(
+            elections[_electionId].started,
+            "Voting has not started"
+        );
+
+        require(
+            !elections[_electionId].ended,
+            "Voting already ended"
+        );
+
+
+        elections[_electionId].ended =
+            true;
+
+
+        emit VotingEnded(
+            _electionId
+        );
+    }
+
+
+    function getElectionName(
+        uint256 _electionId
+    )
+        public
+        view
+        validElection(_electionId)
+        returns (string memory)
+    {
+
+        return elections[_electionId].name;
+    }
+
+
+    function isVotingStarted(
+        uint256 _electionId
+    )
+        public
+        view
+        validElection(_electionId)
+        returns (bool)
+    {
+
+        return elections[_electionId].started;
+    }
+
+
+    function isVotingEnded(
+        uint256 _electionId
+    )
+        public
+        view
+        validElection(_electionId)
+        returns (bool)
+    {
+
+        return elections[_electionId].ended;
+    }
+
+
+    function getCandidate(
+        uint256 _electionId,
+        uint256 _candidateId
+    )
+        public
+        view
+        validElection(_electionId)
+        returns (
+            uint256 id,
+            string memory name,
+            uint256 voteCount
+        )
+    {
+
+        require(
+            _candidateId > 0 &&
+            _candidateId <=
+            elections[_electionId].candidateCount,
+            "Invalid candidate"
+        );
+
+
+        Candidate memory candidate =
+            elections[_electionId]
+                .candidates[_candidateId];
+
+
+        return (
+            candidate.id,
+            candidate.name,
+            candidate.voteCount
+        );
+    }
+
+
+    function getAllCandidates(
+        uint256 _electionId
+    )
+        public
+        view
+        validElection(_electionId)
+        returns (Candidate[] memory)
+    {
+
+        uint256 count =
+            elections[_electionId]
+                .candidateCount;
+
+
+        Candidate[] memory allCandidates =
+            new Candidate[](count);
+
+
+        for (
+            uint256 i = 1;
+            i <= count;
+            i++
+        ) {
+
+            allCandidates[i - 1] =
+                elections[_electionId]
+                    .candidates[i];
+        }
+
+
+        return allCandidates;
+    }
+
+
+    function hasVoted(
+        uint256 _electionId,
+        address _voter
+    )
+        public
+        view
+        validElection(_electionId)
+        returns (bool)
+    {
+
+        return elections[_electionId]
+            .hasVoted[_voter];
+    }
+
+
+    function getCandidateCount(
+        uint256 _electionId
+    )
+        public
+        view
+        validElection(_electionId)
+        returns (uint256)
+    {
+
+        return elections[_electionId]
+            .candidateCount;
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "9490676519": {
+        "password": "scrypt:32768:8:1$coGAcsC5nx0pmgvY$f137a808af7f8dbfda6a31a7c09d85121a420dd2ffb91c0149abef6c994d30ded3889f31ba56426cb699a6d0434ddc4f51b282680f9cdeccd1202a627e16b83a"
+    },
+    "9493009132": {
+        "user_type": "Student",
+        "name": "chitra",
+        "registration_number": "231211101070",
+        "department": "btech",
+        "phone": "9493009132",
+        "password": "scrypt:32768:8:1$2Ep0Ux99yux1lt1T$6592266f5fe0d28550456549fb37c5e1efd5bab00c8bc16dcbbc39532ced955a20ef1e40ec9bfd6cc39bc21e791b63f4b7e55fa1b8940d1fdeba4de560195577"
+    }
+}

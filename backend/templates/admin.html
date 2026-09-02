@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<title>Admin Panel - Blockchain Voting</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    body {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #111827, #312e81);
+        color: white;
+    }
+
+    .container {
+        width: 90%;
+        max-width: 1000px;
+        margin: auto;
+        padding: 40px 0;
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 35px;
+    }
+
+    .election-card {
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 25px;
+    }
+
+    .election-title {
+        font-size: 24px;
+        margin-bottom: 18px;
+    }
+
+    .status {
+        font-size: 17px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .live {
+        color: #4ade80;
+    }
+
+    .not-started {
+        color: #facc15;
+    }
+
+    .ended {
+        color: #f87171;
+    }
+
+    .candidate-title {
+        font-size: 19px;
+        margin-bottom: 15px;
+    }
+
+    .candidate-card {
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: 10px;
+        padding: 15px 18px;
+        margin-bottom: 12px;
+    }
+
+    .candidate-name {
+        font-size: 17px;
+        font-weight: bold;
+    }
+
+    .candidate-id {
+        margin-top: 5px;
+        font-size: 14px;
+        opacity: 0.8;
+    }
+
+    .candidate-votes {
+        margin-top: 5px;
+        font-size: 15px;
+    }
+
+    .buttons {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+    }
+
+    button {
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 15px;
+        color: white;
+        background: #2563eb;
+    }
+
+    button:hover {
+        opacity: 0.9;
+    }
+
+    .end-btn {
+        background: #dc2626;
+    }
+
+    .add-btn {
+        background: #059669;
+    }
+
+    .info-card {
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 15px;
+        padding: 25px;
+        margin-top: 30px;
+    }
+
+    .info-card h2 {
+        margin-bottom: 12px;
+    }
+
+    .back-btn {
+        display: block;
+        width: fit-content;
+        margin: 30px auto 0;
+        padding: 12px 25px;
+        background: #7c3aed;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+    }
+
+    .logout-btn {
+        display: block;
+        width: fit-content;
+        margin: 15px auto 0;
+        padding: 12px 25px;
+        background: #dc2626;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+    }
+
+    .no-candidates {
+        opacity: 0.8;
+        padding: 10px 0;
+    }
+
+    .user-card {
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: 10px;
+        padding: 18px;
+        margin-bottom: 15px;
+    }
+
+    .user-name {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+
+    .user-detail {
+        margin-top: 6px;
+        font-size: 14px;
+        opacity: 0.9;
+    }
+
+    .user-status {
+        display: inline-block;
+        margin-top: 12px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        background: #059669;
+        font-size: 13px;
+        font-weight: bold;
+    }
+
+    .no-users {
+        opacity: 0.8;
+        padding: 15px 0;
+    }
+
+    /* Voting History */
+    .history-card {
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: 10px;
+        padding: 18px;
+        margin-top: 15px;
+    }
+
+    .history-detail {
+        margin-top: 7px;
+        font-size: 14px;
+        opacity: 0.95;
+        word-break: break-word;
+    }
+
+    .transaction-hash {
+        color: #93c5fd;
+        font-family: monospace;
+    }
+
+    .no-history {
+        opacity: 0.8;
+        padding: 15px 0;
+    }
+</style>
+
+
+</head>
+
+<body>
+
+<div class="container">
+
+
+<h1>👨‍💼 Admin Panel</h1>
+
+
+{% for election in elections %}
+
+    <div class="election-card">
+
+        <div class="election-title">
+            {{ election.id }}. {{ election.name }}
+        </div>
+
+
+        {% if election.ended %}
+
+            <div class="status ended">
+                🔴 Voting Ended
+            </div>
+
+        {% elif election.started %}
+
+            <div class="status live">
+                🟢 Voting is Currently Live
+            </div>
+
+        {% else %}
+
+            <div class="status not-started">
+                🟡 Voting Not Started
+            </div>
+
+        {% endif %}
+
+
+        <div class="candidate-title">
+            👥 Candidates
+        </div>
+
+
+        {% if election.candidates %}
+
+            {% for candidate in election.candidates %}
+
+                <div class="candidate-card">
+
+                    <div class="candidate-name">
+                        {{ candidate[1] }}
+                    </div>
+
+                    <div class="candidate-id">
+                        Candidate ID: {{ candidate[0] }}
+                    </div>
+
+                    <div class="candidate-votes">
+                        🗳️ Votes: {{ candidate[2] }}
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="no-candidates">
+                No candidates added yet.
+            </div>
+
+        {% endif %}
+
+
+        <div class="buttons">
+
+            {% if not election.started %}
+
+                <button onclick="alert('Start Voting will be connected with MetaMask in the next step.')">
+                    ▶ Start Voting
+                </button>
+
+            {% elif election.started and not election.ended %}
+
+                <button class="end-btn"
+                        onclick="alert('End Voting will be connected with MetaMask in the next step.')">
+                    ⏹ End Voting
+                </button>
+
+            {% endif %}
+
+
+            <button class="add-btn"
+                    onclick="alert('Candidate addition will be connected with MetaMask in the next step.')">
+                ➕ Add Candidate
+            </button>
+
+        </div>
+
+    </div>
+
+{% endfor %}
+
+
+<div class="info-card">
+
+    <h2>📊 Results</h2>
+
+    <p>
+        View election-wise candidate vote counts and winners.
+    </p>
+
+    <div class="buttons">
+
+        <button onclick="window.location.href='/results'">
+            View Results
+        </button>
+
+    </div>
+
+</div>
+
+
+<div class="info-card">
+
+    <h2>👥 Registered Users</h2>
+
+    <p>
+        View students registered in the blockchain voting system.
+    </p>
+
+
+    {% if users %}
+
+        <div style="margin-top: 20px;">
+
+            {% for phone, user in users.items() %}
+
+                <div class="user-card">
+
+                    <div class="user-name">
+                        👤 {{ user.get('name', 'Not Available') }}
+                    </div>
+
+                    <div class="user-detail">
+                        🎓 User Type:
+                        {{ user.get('user_type', 'Student') }}
+                    </div>
+
+                    <div class="user-detail">
+                        🆔 Registration Number:
+                        {{ user.get('registration_number', 'Not Available') }}
+                    </div>
+
+                    <div class="user-detail">
+                        🏢 Department:
+                        {{ user.get('department', 'Not Available') }}
+                    </div>
+
+                    <div class="user-detail">
+                        📱 Phone:
+                        {{ user.get('phone', phone) }}
+                    </div>
+
+                    <div class="user-status">
+                        ✅ Registered
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="no-users">
+            No registered users found.
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+<!-- Voting History -->
+
+<div class="info-card">
+
+    <h2>📜 Voting History</h2>
+
+    <p>
+        View successful blockchain voting transactions.
+    </p>
+
+
+    {% if voting_history %}
+
+        <div style="margin-top: 20px;">
+
+            {% for vote in voting_history %}
+
+                <div class="history-card">
+
+                    <div class="history-detail">
+                        🗳️ Election ID:
+                        {{ vote.get('election_id', 'Not Available') }}
+                    </div>
+
+                    <div class="history-detail">
+                        👤 Candidate:
+                        {{ vote.get('candidate_name', 'Not Available') }}
+                    </div>
+
+                    <div class="history-detail">
+                        🆔 Candidate ID:
+                        {{ vote.get('candidate_id', 'Not Available') }}
+                    </div>
+
+                    <div class="history-detail">
+                        🔗 Transaction Hash:
+                        <span class="transaction-hash">
+                            {{ vote.get('transaction_hash', 'Not Available') }}
+                        </span>
+                    </div>
+
+                    <div class="history-detail">
+                        🕒 Date & Time:
+                        {{ vote.get('timestamp', 'Not Available') }}
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="no-history">
+            No voting history found.
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+<a href="{{ url_for('index') }}" class="back-btn">
+    ← Back to Home
+</a>
+
+
+<a href="{{ url_for('logout') }}" class="logout-btn">
+    🚪 Logout
+</a>
+
+
+</div>
+
+</body>
+</html>

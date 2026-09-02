@@ -1,0 +1,16 @@
+[
+    {
+        "election_id": 2,
+        "candidate_id": 2,
+        "candidate_name": "Harish",
+        "transaction_hash": "0x44667c3aa983136b243fc63f9ef271950abd721e972eb9a88e594b039f80781c",
+        "timestamp": "2026-09-03T03:03:36.579741"
+    },
+    {
+        "election_id": 1,
+        "candidate_id": 1,
+        "candidate_name": "Krishnamraju",
+        "transaction_hash": "0xf4eb26e7d65abc513b36570eb663b86cdfbe54ca57cd19d43fae67395aa67093",
+        "timestamp": "2026-09-03T03:05:06.066886"
+    }
+]

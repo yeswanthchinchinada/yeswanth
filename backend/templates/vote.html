@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>College Elections - Blockchain Voting System</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+
+            background: linear-gradient(
+                135deg,
+                #0f172a,
+                #1e3a8a,
+                #2563eb
+            );
+
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 35px;
+        }
+
+        .header-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 15px;
+            opacity: 0.9;
+        }
+
+        .elections {
+            display: grid;
+            grid-template-columns: repeat(
+                auto-fit,
+                minmax(280px, 1fr)
+            );
+            gap: 22px;
+        }
+
+        .election-card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px 22px;
+            text-align: center;
+
+            box-shadow:
+                0 12px 30px rgba(0,0,0,0.22);
+
+            cursor: pointer;
+
+            transition:
+                transform 0.25s,
+                box-shadow 0.25s;
+
+            border: 2px solid transparent;
+        }
+
+        .election-card:hover {
+            transform: translateY(-6px);
+
+            box-shadow:
+                0 18px 35px rgba(0,0,0,0.28);
+
+            border-color: #2563eb;
+        }
+
+        .election-icon {
+            width: 70px;
+            height: 70px;
+
+            margin: 0 auto 18px;
+
+            border-radius: 50%;
+
+            background: #eff6ff;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            font-size: 36px;
+        }
+
+        .election-card h2 {
+            color: #111827;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .election-card p {
+            color: #6b7280;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .select-text {
+            display: inline-block;
+
+            margin-top: 15px;
+
+            padding: 9px 18px;
+
+            background: #2563eb;
+
+            color: white;
+
+            border-radius: 7px;
+
+            font-size: 13px;
+
+            font-weight: bold;
+        }
+
+        .details {
+            display: none;
+
+            margin-top: 30px;
+
+            background: white;
+
+            border-radius: 16px;
+
+            padding: 30px;
+
+            box-shadow:
+                0 12px 35px rgba(0,0,0,0.25);
+        }
+
+        .details-header {
+            text-align: center;
+
+            border-bottom:
+                1px solid #e5e7eb;
+
+            padding-bottom: 20px;
+
+            margin-bottom: 25px;
+        }
+
+        .details-header h2 {
+            color: #111827;
+
+            font-size: 26px;
+
+            margin-bottom: 8px;
+        }
+
+        .details-header p {
+            color: #6b7280;
+
+            font-size: 14px;
+        }
+
+        .candidates-title {
+            color: #374151;
+
+            font-size: 18px;
+
+            margin-bottom: 15px;
+        }
+
+        .candidate {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            padding: 16px 18px;
+
+            border:
+                1px solid #e5e7eb;
+
+            border-radius: 10px;
+
+            margin-bottom: 12px;
+
+            background: #f9fafb;
+
+            transition: 0.2s;
+        }
+
+        .candidate:hover {
+            border-color: #2563eb;
+            background: #eff6ff;
+        }
+
+        .candidate-info {
+            display: flex;
+
+            align-items: center;
+
+            gap: 15px;
+        }
+
+        .candidate-symbol {
+            width: 52px;
+            height: 52px;
+
+            border-radius: 10px;
+
+            background: white;
+
+            border:
+                1px solid #d1d5db;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            font-size: 28px;
+        }
+
+        .candidate-name {
+            color: #111827;
+
+            font-size: 16px;
+
+            font-weight: bold;
+        }
+
+        .candidate-label {
+            color: #6b7280;
+
+            font-size: 12px;
+
+            margin-top: 4px;
+        }
+
+        .vote-btn {
+            border: none;
+
+            background: #2563eb;
+
+            color: white;
+
+            padding: 10px 22px;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            font-size: 14px;
+
+            font-weight: bold;
+
+            transition: 0.2s;
+        }
+
+        .vote-btn:hover {
+            background: #1d4ed8;
+
+            transform: scale(1.03);
+        }
+
+        .vote-btn.selected {
+            background: #16a34a !important;
+        }
+
+        .submit-button {
+            display: block;
+
+            width: 210px;
+
+            margin: 30px auto 0;
+
+            padding: 13px;
+
+            background: #16a34a;
+
+            color: white;
+
+            border: none;
+
+            border-radius: 8px;
+
+            font-size: 15px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+        .submit-button:hover {
+            background: #15803d;
+        }
+
+        .submit-button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .message {
+            display: none;
+
+            margin-top: 20px;
+
+            padding: 14px;
+
+            border-radius: 8px;
+
+            text-align: center;
+
+            font-size: 15px;
+
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+
+            body {
+                padding: 25px 15px;
+            }
+
+            .header h1 {
+                font-size: 25px;
+            }
+
+            .details {
+                padding: 20px;
+            }
+
+            .candidate {
+                flex-direction: column;
+
+                align-items: stretch;
+
+                gap: 15px;
+            }
+
+            .vote-btn {
+                width: 100%;
+            }
+
+            .submit-button {
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <div class="header-icon">
+            🗳️
+        </div>
+
+        <h1>
+            College Elections
+        </h1>
+
+        <p>
+            Select an election to view candidates and cast your vote
+        </p>
+
+    </div>
+
+
+    <!-- ELECTION CARDS -->
+
+    <div
+        class="elections"
+        id="electionsSection"
+    >
+
+        <div
+            class="election-card"
+            data-election="president"
+        >
+
+            <div class="election-icon">
+                👨‍🎓
+            </div>
+
+            <h2>
+                Student Council President
+            </h2>
+
+            <p>
+                Choose your preferred candidate
+                for Student Council President.
+            </p>
+
+            <span class="select-text">
+                View Candidates
+            </span>
+
+        </div>
+
+
+        <div
+            class="election-card"
+            data-election="sports"
+        >
+
+            <div class="election-icon">
+                🏆
+            </div>
+
+            <h2>
+                Sports Secretary
+            </h2>
+
+            <p>
+                Choose your preferred candidate
+                for Sports Secretary.
+            </p>
+
+            <span class="select-text">
+                View Candidates
+            </span>
+
+        </div>
+
+
+        <div
+            class="election-card"
+            data-election="academic"
+        >
+
+            <div class="election-icon">
+                📚
+            </div>
+
+            <h2>
+                Academic Secretary
+            </h2>
+
+            <p>
+                Choose your preferred candidate
+                for Academic Secretary.
+            </p>
+
+            <span class="select-text">
+                View Candidates
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- ELECTION DETAILS -->
+
+    <div
+        class="details"
+        id="details"
+    >
+
+        <div class="details-header">
+
+            <h2 id="electionTitle">
+                Election
+            </h2>
+
+            <p>
+                Select one candidate and click Submit Vote
+            </p>
+
+        </div>
+
+
+        <h3 class="candidates-title">
+            Candidates
+        </h3>
+
+
+        <!-- CANDIDATE 1 -->
+
+        <div class="candidate">
+
+            <div class="candidate-info">
+
+                <div
+                    class="candidate-symbol"
+                    id="symbol1"
+                >
+                    🗳️
+                </div>
+
+                <div>
+
+                    <div
+                        class="candidate-name"
+                        id="candidate1"
+                    >
+                        Candidate 1
+                    </div>
+
+                    <div class="candidate-label">
+                        Candidate 1
+                    </div>
+
+                </div>
+
+            </div>
+
+            <button
+                type="button"
+                class="vote-btn"
+                id="voteButton1"
+            >
+                Vote
+            </button>
+
+        </div>
+
+
+        <!-- CANDIDATE 2 -->
+
+        <div class="candidate">
+
+            <div class="candidate-info">
+
+                <div
+                    class="candidate-symbol"
+                    id="symbol2"
+                >
+                    🗳️
+                </div>
+
+                <div>
+
+                    <div
+                        class="candidate-name"
+                        id="candidate2"
+                    >
+                        Candidate 2
+                    </div>
+
+                    <div class="candidate-label">
+                        Candidate 2
+                    </div>
+
+                </div>
+
+            </div>
+
+            <button
+                type="button"
+                class="vote-btn"
+                id="voteButton2"
+            >
+                Vote
+            </button>
+
+        </div>
+
+
+        <!-- CANDIDATE 3 -->
+
+        <div class="candidate">
+
+            <div class="candidate-info">
+
+                <div
+                    class="candidate-symbol"
+                    id="symbol3"
+                >
+                    🗳️
+                </div>
+
+                <div>
+
+                    <div
+                        class="candidate-name"
+                        id="candidate3"
+                    >
+                        Candidate 3
+                    </div>
+
+                    <div class="candidate-label">
+                        Candidate 3
+                    </div>
+
+                </div>
+
+            </div>
+
+            <button
+                type="button"
+                class="vote-btn"
+                id="voteButton3"
+            >
+                Vote
+            </button>
+
+        </div>
+
+
+        <!-- MESSAGE -->
+
+        <div
+            class="message"
+            id="message"
+        >
+        </div>
+
+
+        <!-- SUBMIT -->
+
+        <button
+            type="button"
+            class="submit-button"
+            id="submitVoteButton"
+            disabled
+        >
+            Submit Vote
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- BLOCKCHAIN JS -->
+
+<script src="{{ url_for('static', filename='js/voting.js') }}"></script>
+
+
+<script>
+
+let currentElection = "";
+
+let selectedCandidate = null;
+
+
+const electionData = {
+
+    president: {
+
+        title: "Student Council President",
+
+        candidates: [
+
+            {
+                name: "Krishnamraju",
+                symbol: "🥛"
+            },
+
+            {
+                name: "Karthik",
+                symbol: "🚲"
+            },
+
+            {
+                name: "Avinash",
+                symbol: "🪭"
+            }
+
+        ]
+
+    },
+
+
+    sports: {
+
+        title: "Sports Secretary",
+
+        candidates: [
+
+            {
+                name: "Yeswanth",
+                symbol: "📣"
+            },
+
+            {
+                name: "Harish",
+                symbol: "⚽"
+            },
+
+            {
+                name: "Sai Babu",
+                symbol: "🏏"
+            }
+
+        ]
+
+    },
+
+
+    academic: {
+
+        title: "Academic Secretary",
+
+        candidates: [
+
+            {
+                name: "Vinay",
+                symbol: "📋"
+            },
+
+            {
+                name: "Teja",
+                symbol: "🖊️"
+            },
+
+            {
+                name: "Parmesh",
+                symbol: "📖"
+            }
+
+        ]
+
+    }
+
+};
+
+
+/* ==========================================
+   SHOW ELECTION
+   ========================================== */
+
+function showElection(election) {
+
+    currentElection =
+        election;
+
+    selectedCandidate =
+        null;
+
+
+    const data =
+        electionData[election];
+
+
+    document.getElementById(
+        "electionTitle"
+    ).innerText =
+        data.title;
+
+
+    for (
+        let i = 1;
+        i <= 3;
+        i++
+    ) {
+
+        document.getElementById(
+            "candidate" + i
+        ).innerText =
+            data.candidates[i - 1].name;
+
+
+        document.getElementById(
+            "symbol" + i
+        ).innerText =
+            data.candidates[i - 1].symbol;
+
+    }
+
+
+    resetVoteButtons();
+
+
+    const submitButton =
+        document.getElementById(
+            "submitVoteButton"
+        );
+
+
+    submitButton.disabled =
+        true;
+
+
+    submitButton.innerText =
+        "Submit Vote";
+
+
+    document.getElementById(
+        "message"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "details"
+    ).style.display =
+        "block";
+
+
+    document.getElementById(
+        "details"
+    ).scrollIntoView({
+            behavior: "smooth"
+        });
+
+}
+
+
+/* ==========================================
+   SELECT CANDIDATE
+   ========================================== */
+
+function selectCandidate(candidateId) {
+
+    if (!currentElection) {
+
+        alert(
+            "Please select an election first."
+        );
+
+        return;
+
+    }
+
+
+    selectedCandidate =
+        candidateId;
+
+
+    resetVoteButtons();
+
+
+    const selectedButton =
+        document.getElementById(
+            "voteButton" +
+            candidateId
+        );
+
+
+    selectedButton.innerText =
+        "Selected";
+
+
+    selectedButton.classList.add(
+        "selected"
+    );
+
+
+    document.getElementById(
+        "submitVoteButton"
+    ).disabled =
+        false;
+
+
+    const candidate =
+        electionData[
+            currentElection
+        ].candidates[
+            candidateId - 1
+        ];
+
+
+    showMessage(
+        "Selected candidate: " +
+        candidate.name
+    );
+
+}
+
+
+/* ==========================================
+   SUBMIT VOTE
+   ========================================== */
+
+async function submitVote() {
+
+    console.log(
+        "SUBMIT VOTE CLICKED"
+    );
+
+
+    if (!currentElection) {
+
+        alert(
+            "Please select an election first."
+        );
+
+        return;
+
+    }
+
+
+    if (!selectedCandidate) {
+
+        alert(
+            "Please select a candidate first."
+        );
+
+        return;
+
+    }
+
+
+    const data =
+        electionData[
+            currentElection
+        ];
+
+
+    const candidate =
+        data.candidates[
+            selectedCandidate - 1
+        ];
+
+
+    let electionId;
+
+
+    if (
+        currentElection ===
+        "president"
+    ) {
+
+        electionId = 1;
+
+    }
+
+    else if (
+        currentElection ===
+        "sports"
+    ) {
+
+        electionId = 2;
+
+    }
+
+    else if (
+        currentElection ===
+        "academic"
+    ) {
+
+        electionId = 3;
+
+    }
+
+    else {
+
+        alert(
+            "Invalid election."
+        );
+
+        return;
+
+    }
+
+
+    const submitButton =
+        document.getElementById(
+            "submitVoteButton"
+        );
+
+
+    submitButton.disabled =
+        true;
+
+
+    submitButton.innerText =
+        "Connecting MetaMask...";
+
+
+    try {
+
+        if (
+            typeof castVote !==
+            "function"
+        ) {
+
+            alert(
+                "Blockchain voting module is not loaded.\n\n" +
+                "Please refresh the page."
+            );
+
+            submitButton.disabled =
+                false;
+
+            submitButton.innerText =
+                "Submit Vote";
+
+            return;
+
+        }
+
+
+        const success =
+            await castVote(
+                electionId,
+                selectedCandidate,
+                candidate.name
+            );
+
+
+        if (success === true) {
+
+            submitButton.innerText =
+                "Vote Submitted";
+
+
+            alert(
+                "Vote successfully recorded on blockchain!\n\n" +
+                "Candidate: " +
+                candidate.name +
+                "\n\n" +
+                "Click OK to continue."
+            );
+
+
+            /*
+             * HIDE DETAILS
+             */
+
+            document.getElementById(
+                "details"
+            ).style.display =
+                "none";
+
+
+            /*
+             * RESET
+             */
+
+            currentElection =
+                "";
+
+            selectedCandidate =
+                null;
+
+
+            resetVoteButtons();
+
+
+            document.getElementById(
+                "message"
+            ).style.display =
+                "none";
+
+
+            submitButton.disabled =
+                true;
+
+
+            submitButton.innerText =
+                "Submit Vote";
+
+
+            /*
+             * SHOW ONLY ELECTION CARDS
+             */
+
+            document.getElementById(
+                "electionsSection"
+            ).style.display =
+                "grid";
+
+
+            window.scrollTo({
+
+                top: 0,
+
+                behavior: "smooth"
+
+            });
+
+        }
+
+        else {
+
+            submitButton.disabled =
+                false;
+
+            submitButton.innerText =
+                "Submit Vote";
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "SUBMIT ERROR:",
+            error
+        );
+
+
+        submitButton.disabled =
+            false;
+
+
+        submitButton.innerText =
+            "Submit Vote";
+
+
+        alert(
+            "Voting failed.\n\n" +
+            (
+                error.message ||
+                "Unknown error"
+            )
+        );
+
+    }
+
+}
+
+
+/* ==========================================
+   RESET BUTTONS
+   ========================================== */
+
+function resetVoteButtons() {
+
+    for (
+        let i = 1;
+        i <= 3;
+        i++
+    ) {
+
+        const button =
+            document.getElementById(
+                "voteButton" + i
+            );
+
+
+        button.innerText =
+            "Vote";
+
+
+        button.classList.remove(
+            "selected"
+        );
+
+    }
+
+}
+
+
+/* ==========================================
+   MESSAGE
+   ========================================== */
+
+function showMessage(text) {
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+
+    message.style.display =
+        "block";
+
+
+    message.innerText =
+        text;
+
+
+    message.style.background =
+        "#dcfce7";
+
+
+    message.style.color =
+        "#166534";
+
+}
+
+
+/* ==========================================
+   EVENT LISTENERS
+   ========================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+
+        /* ELECTION CARDS */
+
+        const electionCards =
+            document.querySelectorAll(
+                ".election-card"
+            );
+
+
+        electionCards.forEach(
+            function (card) {
+
+                card.addEventListener(
+                    "click",
+                    function () {
+
+                        const election =
+                            card.dataset.election;
+
+                        showElection(
+                            election
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+        /* CANDIDATE BUTTONS */
+
+        document.getElementById(
+            "voteButton1"
+        ).addEventListener(
+            "click",
+            function () {
+
+                selectCandidate(1);
+
+            }
+        );
+
+
+        document.getElementById(
+            "voteButton2"
+        ).addEventListener(
+            "click",
+            function () {
+
+                selectCandidate(2);
+
+            }
+        );
+
+
+        document.getElementById(
+            "voteButton3"
+        ).addEventListener(
+            "click",
+            function () {
+
+                selectCandidate(3);
+
+            }
+        );
+
+
+        /* SUBMIT BUTTON */
+
+        document.getElementById(
+            "submitVoteButton"
+        ).addEventListener(
+            "click",
+            function () {
+
+                console.log(
+                    "SUBMIT BUTTON EVENT FIRED"
+                );
+
+
+                submitVote();
+
+            }
+        );
+
+    }
+);
+
+</script>
+
+</body>
+
+</html>
