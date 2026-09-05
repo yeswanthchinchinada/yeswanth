@@ -12,5 +12,29 @@
         "candidate_name": "Krishnamraju",
         "transaction_hash": "0xf4eb26e7d65abc513b36570eb663b86cdfbe54ca57cd19d43fae67395aa67093",
         "timestamp": "2026-09-03T03:05:06.066886"
+    },
+    {
+        "election_id": 1,
+        "candidate_id": 1,
+        "candidate_name": "Krishnamraju",
+        "transaction_hash": "5715181eceda93b74b1e27342ce0d040e730971a12c32fbd6c948f15240ca884",
+        "phone": "9493009132",
+        "timestamp": "2026-09-06T00:25:50.872896"
+    },
+    {
+        "election_id": 2,
+        "candidate_id": 1,
+        "candidate_name": "Yeswanth",
+        "transaction_hash": "4bb021dbb8df73a16d67c2f1e78c2bea3f26d8093884d6c2b7c664d9057a9600",
+        "phone": "9493009132",
+        "timestamp": "2026-09-06T00:26:02.531948"
+    },
+    {
+        "election_id": 3,
+        "candidate_id": 1,
+        "candidate_name": "Vinay",
+        "transaction_hash": "311339f3a52fc1128c26823ed32ef646d77a112f352ac12302d209d69fd89a35",
+        "phone": "9493009132",
+        "timestamp": "2026-09-06T00:26:12.245732"
     }
 ]

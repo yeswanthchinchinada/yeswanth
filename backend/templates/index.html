@@ -32,12 +32,20 @@
 
             align-items: center;
 
-            background: linear-gradient(
-                135deg,
-                #0f172a,
-                #1e3a8a,
-                #2563eb
-            );
+            background:
+                linear-gradient(
+                    rgba(15, 23, 42, 0.35),
+                    rgba(15, 23, 42, 0.35)
+                ),
+                url("{{ url_for('static', filename='images/b9 background.jpeg') }}");
+
+            background-size: cover;
+
+            background-position: center;
+
+            background-repeat: no-repeat;
+
+            background-attachment: fixed;
 
         }
 
@@ -628,8 +636,8 @@ function login(event) {
 
             }, 800);
 
-
         }
+
 
         else {
 

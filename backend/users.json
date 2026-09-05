@@ -8,6 +8,6 @@
         "registration_number": "231211101070",
         "department": "btech",
         "phone": "9493009132",
-        "password": "scrypt:32768:8:1$2Ep0Ux99yux1lt1T$6592266f5fe0d28550456549fb37c5e1efd5bab00c8bc16dcbbc39532ced955a20ef1e40ec9bfd6cc39bc21e791b63f4b7e55fa1b8940d1fdeba4de560195577"
+        "password": "scrypt:32768:8:1$2RUYXgiX07gCc4o9$4bf5c6e61a5732f20c63ec9fbb0255437ea627595ef28d5b0a45b9c248a611ffd65d997c3e9fc14ecc5ae8aa2117b91dd43f8783d270a116a19e64ed7a2d3ec1"
     }
 }

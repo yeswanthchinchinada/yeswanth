@@ -8,6 +8,7 @@
 
 <title>Voting Results</title>
 
+
 <style>
     * {
         box-sizing: border-box;
@@ -18,7 +19,16 @@
 
     body {
         min-height: 100vh;
-        background: linear-gradient(135deg, #0f172a, #1e3a8a);
+        background:
+            linear-gradient(
+                rgba(15, 23, 42, 0.35),
+                rgba(15, 23, 42, 0.35)
+            ),
+            url("{{ url_for('static', filename='images/b9 background.jpeg') }}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
         color: white;
     }
 
@@ -126,134 +136,132 @@
     }
 </style>
 
-
 </head>
 
 <body>
 
 <div class="container">
 
-
 <h1>📊 Voting Results</h1>
 
 {% if elections %}
 
-    {% for election in elections %}
 
-        <div class="election-card">
+{% for election in elections %}
 
-            <div class="election-title">
-                {{ election.id }}. {{ election.name }}
-            </div>
+    <div class="election-card">
 
-            <div class="summary">
-                <p>
-                    🗳️ <strong>Total Votes:</strong>
-                    {{ election.total_votes }}
-                </p>
-            </div>
+        <div class="election-title">
+            {{ election.id }}. {{ election.name }}
+        </div>
 
+        <div class="summary">
+            <p>
+                🗳️ <strong>Total Votes:</strong>
+                {{ election.total_votes }}
+            </p>
+        </div>
 
-            {% if election.candidates %}
+        {% if election.candidates %}
 
-                {% for candidate in election.candidates %}
+            {% for candidate in election.candidates %}
 
-                    <div class="candidate">
+                <div class="candidate">
 
-                        {% if election.id == 1 %}
+                    {% if election.id == 1 %}
 
-                            {% if candidate[1] == "Krishnamraju" %}
-                                <span class="symbol">🥛</span>
-                            {% elif candidate[1] == "Karthik" %}
-                                <span class="symbol">🚲</span>
-                            {% elif candidate[1] == "Avinash" %}
-                                <span class="symbol">🪭</span>
-                            {% endif %}
-
-                        {% elif election.id == 2 %}
-
-                            {% if candidate[1] == "Yeswanth" %}
-                                <span class="symbol">📣</span>
-                            {% elif candidate[1] == "Harish" %}
-                                <span class="symbol">⚽</span>
-                            {% elif candidate[1] == "Sai Babu" %}
-                                <span class="symbol">🏏</span>
-                            {% endif %}
-
-                        {% elif election.id == 3 %}
-
-                            {% if candidate[1] == "Vinay" %}
-                                <span class="symbol">📋</span>
-                            {% elif candidate[1] == "Teja" %}
-                                <span class="symbol">🖊️</span>
-                            {% elif candidate[1] == "Parmesh" %}
-                                <span class="symbol">📖</span>
-                            {% endif %}
-
+                        {% if candidate[1] == "Krishnamraju" %}
+                            <span class="symbol">🥛</span>
+                        {% elif candidate[1] == "Karthik" %}
+                            <span class="symbol">🚲</span>
+                        {% elif candidate[1] == "Avinash" %}
+                            <span class="symbol">🪭</span>
                         {% endif %}
 
-                        <span class="candidate-name">
-                            {{ candidate[1] }}
-                        </span>
+                    {% elif election.id == 2 %}
 
-                        <div class="candidate-info">
-                            Candidate ID: {{ candidate[0] }}
-                        </div>
+                        {% if candidate[1] == "Yeswanth" %}
+                            <span class="symbol">📣</span>
+                        {% elif candidate[1] == "Harish" %}
+                            <span class="symbol">⚽</span>
+                        {% elif candidate[1] == "Sai Babu" %}
+                            <span class="symbol">🏏</span>
+                        {% endif %}
 
-                        <div class="votes">
-                            🗳️ Votes: {{ candidate[2] }}
-                        </div>
+                    {% elif election.id == 3 %}
 
+                        {% if candidate[1] == "Vinay" %}
+                            <span class="symbol">📋</span>
+                        {% elif candidate[1] == "Teja" %}
+                            <span class="symbol">🖊️</span>
+                        {% elif candidate[1] == "Parmesh" %}
+                            <span class="symbol">📖</span>
+                        {% endif %}
+
+                    {% endif %}
+
+                    <span class="candidate-name">
+                        {{ candidate[1] }}
+                    </span>
+
+                    <div class="candidate-info">
+                        Candidate ID: {{ candidate[0] }}
                     </div>
 
-                {% endfor %}
-
-
-                {% if election.winner %}
-
-                    <div class="winner">
-
-                        <div class="winner-title">
-                            🏆 Winner
-                        </div>
-
-                        <div class="winner-name">
-                            {{ election.winner[1] }}
-                        </div>
-
-                        <div class="candidate-info">
-                            Votes: {{ election.winner[2] }}
-                        </div>
-
+                    <div class="votes">
+                        🗳️ Votes: {{ candidate[2] }}
                     </div>
 
-                {% endif %}
+                </div>
 
-            {% else %}
+            {% endfor %}
 
-                <div class="empty">
-                    No candidates available.
+            {% if election.winner %}
+
+                <div class="winner">
+
+                    <div class="winner-title">
+                        🏆 Winner
+                    </div>
+
+                    <div class="winner-name">
+                        {{ election.winner[1] }}
+                    </div>
+
+                    <div class="candidate-info">
+                        Votes: {{ election.winner[2] }}
+                    </div>
+
                 </div>
 
             {% endif %}
 
-        </div>
+        {% else %}
 
-    {% endfor %}
+            <div class="empty">
+                No candidates available.
+            </div>
+
+        {% endif %}
+
+    </div>
+
+{% endfor %}
+
 
 {% else %}
 
-    <div class="empty">
-        No voting results available.
-    </div>
+
+<div class="empty">
+    No voting results available.
+</div>
+
 
 {% endif %}
-
 
 <a href="{{ url_for('index') }}" class="back-btn">
     ← Back to Home
 </a>
-
 
 </div>
 

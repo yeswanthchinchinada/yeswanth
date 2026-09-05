@@ -9,7 +9,7 @@ async function main() {
 
   const voting = await ethers.getContractAt(
     "Voting",
-    "0x9A9141aA574561eb6E0121a42E247D0b5e2A2f4d",
+    "0x0539A968714bc20C2946e6dC9Ff88fbE2826e93e",
     owner
   );
 
