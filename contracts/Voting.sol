@@ -220,6 +220,26 @@ contract Voting {
         emit VotingEnded(_electionId);
     }
 
+    function restartVoting(uint256 _electionId)
+        public
+        onlyOwner
+        validElection(_electionId)
+    {
+        require(
+            elections[_electionId].started,
+            "Voting has not started"
+        );
+
+        require(
+            elections[_electionId].ended,
+            "Voting is still active"
+        );
+
+        elections[_electionId].ended = false;
+
+        emit VotingStarted(_electionId);
+    }
+
     function getElectionName(uint256 _electionId)
         public
         view
@@ -334,4 +354,3 @@ contract Voting {
             .candidateCount;
     }
 }
-

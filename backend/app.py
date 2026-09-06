@@ -23,7 +23,10 @@ app.secret_key = "blockchain-voting-secret-key"
 # GANACHE CONNECTION
 # ============================================================
 
-GANACHE_URL = "http://127.0.0.1:7545"
+GANACHE_URL = os.getenv(
+    "BLOCKCHAIN_RPC_URL",
+    "http://127.0.0.1:7545"
+)
 
 web3 = Web3(
     Web3.HTTPProvider(
@@ -38,7 +41,7 @@ web3 = Web3(
 # ============================================================
 
 CONTRACT_ADDRESS = Web3.to_checksum_address(
-    "0x66AC14113543eaCf77c146C0335b6F5dE57d10bb"
+    "0x5A383bc140f5A8c5a1Ca24EE55F326EC78e8726D"
 )
 
 

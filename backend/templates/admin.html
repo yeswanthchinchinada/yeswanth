@@ -318,7 +318,25 @@
  
     <div class="buttons"> 
  
-        {% if not election.started %} 
+        <!-- ENDED --> 
+        {% if election.ended %} 
+ 
+            <button data-election-id="{{ election.id }}"
+                    onclick="startVoting(Number(this.dataset.electionId))"> 
+                ▶ Start Voting 
+            </button> 
+ 
+        <!-- ACTIVE --> 
+        {% elif election.started %} 
+ 
+            <button class="end-btn"
+                    data-election-id="{{ election.id }}"
+                    onclick="endVoting(Number(this.dataset.electionId))"> 
+                ⏹ End Voting 
+            </button> 
+ 
+        <!-- NOT STARTED --> 
+        {% else %} 
  
             {% if election.candidates %} 
  
@@ -333,14 +351,6 @@
                     data-election-id="{{ election.id }}"
                     onclick="addCandidate(Number(this.dataset.electionId))"> 
                 ➕ Add Candidate 
-            </button> 
- 
-        {% elif election.started and not election.ended %} 
- 
-            <button class="end-btn"
-                    data-election-id="{{ election.id }}"
-                    onclick="endVoting(Number(this.dataset.electionId))"> 
-                ⏹ End Voting 
             </button> 
  
         {% endif %} 
