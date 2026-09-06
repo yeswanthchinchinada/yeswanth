@@ -4,10 +4,19 @@ from web3 import Web3
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from dotenv import load_dotenv
+
 import json
 import os
 import hashlib
 from datetime import datetime
+
+
+# ============================================================
+# LOAD ENVIRONMENT VARIABLES
+# ============================================================
+
+load_dotenv()
 
 
 app = Flask(
@@ -20,18 +29,25 @@ app.secret_key = "blockchain-voting-secret-key"
 
 
 # ============================================================
-# GANACHE CONNECTION
+# BLOCKCHAIN CONNECTION
 # ============================================================
 
-GANACHE_URL = os.getenv(
+BLOCKCHAIN_RPC_URL = os.getenv(
     "BLOCKCHAIN_RPC_URL",
-    "http://127.0.0.1:7545"
+    os.getenv(
+        "SEPOLIA_RPC_URL",
+        "http://127.0.0.1:7545"
+    )
+)
+
+PRIVATE_KEY = os.getenv(
+    "PRIVATE_KEY"
 )
 
 web3 = Web3(
     Web3.HTTPProvider(
-        GANACHE_URL,
-        request_kwargs={"timeout": 3}
+        BLOCKCHAIN_RPC_URL,
+        request_kwargs={"timeout": 10}
     )
 )
 
@@ -41,7 +57,7 @@ web3 = Web3(
 # ============================================================
 
 CONTRACT_ADDRESS = Web3.to_checksum_address(
-    "0x5A383bc140f5A8c5a1Ca24EE55F326EC78e8726D"
+    "0xdA8b694d0283E90865083076696f85a64dBf4C96"
 )
 
 
@@ -167,10 +183,6 @@ def register():
             "message": "Invalid request."
         }
 
-    # ========================================================
-    # USER DETAILS
-    # ========================================================
-
     user_type = data.get(
         "user_type",
         ""
@@ -202,10 +214,6 @@ def register():
     )
 
 
-    # ========================================================
-    # USER TYPE VALIDATION
-    # ========================================================
-
     if user_type not in [
         "Student",
         "Faculty"
@@ -218,10 +226,6 @@ def register():
         }
 
 
-    # ========================================================
-    # NAME VALIDATION
-    # ========================================================
-
     if not name:
 
         return {
@@ -231,10 +235,6 @@ def register():
         }
 
 
-    # ========================================================
-    # DEPARTMENT VALIDATION
-    # ========================================================
-
     if not department:
 
         return {
@@ -243,10 +243,6 @@ def register():
             "Please enter your department."
         }
 
-
-    # ========================================================
-    # REGISTRATION NUMBER
-    # ========================================================
 
     if user_type == "Student":
 
@@ -263,10 +259,6 @@ def register():
         registration_number = ""
 
 
-    # ========================================================
-    # PHONE VALIDATION
-    # ========================================================
-
     if not phone.isdigit() or len(phone) != 10:
 
         return {
@@ -275,10 +267,6 @@ def register():
             "Please enter a valid 10-digit phone number."
         }
 
-
-    # ========================================================
-    # PASSWORD VALIDATION
-    # ========================================================
 
     if len(password) < 8:
 
@@ -326,9 +314,9 @@ def register():
 
 
     if not any(
-    char in "@#$%^&*!"
-    for char in password
-):
+        char in "@#$%^&*!"
+        for char in password
+    ):
 
         return {
             "success": False,
@@ -337,16 +325,8 @@ def register():
         }
 
 
-    # ========================================================
-    # LOAD USERS
-    # ========================================================
-
     users = load_users()
 
-
-    # ========================================================
-    # CHECK PHONE
-    # ========================================================
 
     if phone in users:
 
@@ -356,10 +336,6 @@ def register():
             "An account with this phone number already exists."
         }
 
-
-    # ========================================================
-    # CHECK DUPLICATE NAME
-    # ========================================================
 
     normalized_name = name.lower()
 
@@ -378,10 +354,6 @@ def register():
                 "An account with this name already exists."
             }
 
-
-    # ========================================================
-    # CHECK DUPLICATE REGISTRATION NUMBER
-    # ========================================================
 
     if registration_number:
 
@@ -410,18 +382,10 @@ def register():
                 }
 
 
-    # ========================================================
-    # HASH PASSWORD
-    # ========================================================
-
     password_hash = generate_password_hash(
         password
     )
 
-
-    # ========================================================
-    # SAVE USER
-    # ========================================================
 
     users[phone] = {
 
@@ -485,10 +449,6 @@ def login():
     )
 
 
-    # ========================================================
-    # PHONE VALIDATION
-    # ========================================================
-
     if not phone.isdigit() or len(phone) != 10:
 
         return {
@@ -498,16 +458,8 @@ def login():
         }
 
 
-    # ========================================================
-    # LOAD USERS
-    # ========================================================
-
     users = load_users()
 
-
-    # ========================================================
-    # CHECK USER
-    # ========================================================
 
     if phone not in users:
 
@@ -517,10 +469,6 @@ def login():
             "Account not found. Please create an account first."
         }
 
-
-    # ========================================================
-    # CHECK PASSWORD
-    # ========================================================
 
     stored_hash = users[phone].get(
         "password",
@@ -538,10 +486,6 @@ def login():
             "Incorrect password."
         }
 
-
-    # ========================================================
-    # USER LOGIN SUCCESS
-    # ========================================================
 
     session.clear()
 
@@ -804,18 +748,59 @@ def get_admin_account():
     if not web3.is_connected():
 
         raise Exception(
-            "Ganache is not connected."
+            "Blockchain RPC is not connected."
         )
 
-    accounts = web3.eth.accounts
-
-    if not accounts:
+    if not PRIVATE_KEY:
 
         raise Exception(
-            "No Ganache account available."
+            "PRIVATE_KEY is not configured."
         )
 
-    return accounts[0]
+    account = web3.eth.account.from_key(
+        PRIVATE_KEY
+    )
+
+    return account
+
+
+def send_blockchain_transaction(function):
+
+    account = get_admin_account()
+
+    transaction = function.build_transaction({
+
+        "from":
+        account.address,
+
+        "nonce":
+        web3.eth.get_transaction_count(
+            account.address
+        ),
+
+        "chainId":
+        web3.eth.chain_id,
+
+        "gas":
+        300000,
+
+        "gasPrice":
+        web3.eth.gas_price
+    })
+
+    signed_transaction = account.sign_transaction(
+        transaction
+    )
+
+    transaction_hash = web3.eth.send_raw_transaction(
+        signed_transaction.raw_transaction
+    )
+
+    receipt = web3.eth.wait_for_transaction_receipt(
+        transaction_hash
+    )
+
+    return receipt
 
 
 # ============================================================
@@ -863,10 +848,6 @@ def submit_vote():
         )
 
 
-        # ====================================================
-        # GET LOGGED-IN USER
-        # ====================================================
-
         phone = session.get(
             "phone"
         )
@@ -894,10 +875,6 @@ def submit_vote():
         user = users[phone]
 
 
-        # ====================================================
-        # USER IDENTITY
-        # ====================================================
-
         registration_number = (
             user.get(
                 "registration_number",
@@ -915,18 +892,10 @@ def submit_vote():
             voter_identity = phone
 
 
-        # ====================================================
-        # CREATE BLOCKCHAIN VOTER ID
-        # ====================================================
-
         voter_id = Web3.keccak(
             text=voter_identity
         )
 
-
-        # ====================================================
-        # CHECK VOTING STATUS
-        # ====================================================
 
         started = (
             contract.functions
@@ -963,10 +932,6 @@ def submit_vote():
             }
 
 
-        # ====================================================
-        # CHECK WHETHER USER ALREADY VOTED
-        # ====================================================
-
         already_voted = (
             contract.functions
             .hasVoted(
@@ -985,10 +950,6 @@ def submit_vote():
                 "You have already voted in this election."
             }
 
-
-        # ====================================================
-        # VALIDATE CANDIDATE
-        # ====================================================
 
         candidates = (
             contract.functions
@@ -1016,39 +977,11 @@ def submit_vote():
         )
 
 
-        # ====================================================
-        # BLOCKCHAIN ACCOUNT
-        # ====================================================
-
-        account = get_admin_account()
-
-
-        # ====================================================
-        # SUBMIT BLOCKCHAIN VOTE
-        # ====================================================
-
-        transaction = (
-            contract.functions
-            .vote(
+        receipt = send_blockchain_transaction(
+            contract.functions.vote(
                 election_id,
                 candidate_id,
                 voter_id
-            )
-            .transact({
-                "from":
-                account
-            })
-        )
-
-
-        # ====================================================
-        # WAIT FOR CONFIRMATION
-        # ====================================================
-
-        receipt = (
-            web3.eth
-            .wait_for_transaction_receipt(
-                transaction
             )
         )
 
@@ -1057,10 +990,6 @@ def submit_vote():
             receipt.transactionHash.hex()
         )
 
-
-        # ====================================================
-        # SAVE VOTING HISTORY
-        # ====================================================
 
         history = []
 
@@ -1118,10 +1047,6 @@ def submit_vote():
                 indent=4
             )
 
-
-        # ====================================================
-        # SUCCESS
-        # ====================================================
 
         return {
 
@@ -1225,27 +1150,11 @@ def add_candidate():
             }, 400
 
 
-        account = get_admin_account()
-
-
-        transaction = (
-            contract.functions
-            .addCandidate(
+        receipt = send_blockchain_transaction(
+            contract.functions.addCandidate(
                 election_id,
                 candidate_name,
                 candidate_symbol
-            )
-            .transact({
-                "from":
-                account
-            })
-        )
-
-
-        receipt = (
-            web3.eth
-            .wait_for_transaction_receipt(
-                transaction
             )
         )
 
@@ -1342,25 +1251,9 @@ def start_voting():
             }, 400
 
 
-        account = get_admin_account()
-
-
-        transaction = (
-            contract.functions
-            .startVoting(
+        receipt = send_blockchain_transaction(
+            contract.functions.startVoting(
                 election_id
-            )
-            .transact({
-                "from":
-                account
-            })
-        )
-
-
-        receipt = (
-            web3.eth
-            .wait_for_transaction_receipt(
-                transaction
             )
         )
 
@@ -1436,25 +1329,9 @@ def end_voting():
         )
 
 
-        account = get_admin_account()
-
-
-        transaction = (
-            contract.functions
-            .endVoting(
+        receipt = send_blockchain_transaction(
+            contract.functions.endVoting(
                 election_id
-            )
-            .transact({
-                "from":
-                account
-            })
-        )
-
-
-        receipt = (
-            web3.eth
-            .wait_for_transaction_receipt(
-                transaction
             )
         )
 
@@ -1734,7 +1611,7 @@ def results():
         else:
 
             raise Exception(
-                "Ganache is not connected."
+                "Blockchain is not connected."
             )
 
 
@@ -1927,19 +1804,19 @@ if __name__ == "__main__":
         if not web3.is_connected():
 
             print(
-                "WARNING: Ganache connection failed!"
+                "WARNING: Blockchain connection failed!"
             )
 
         else:
 
             print(
-                "Connected to Ganache successfully!"
+                "Connected to blockchain successfully!"
             )
 
     except Exception as e:
 
         print(
-            "Ganache check error:",
+            "Blockchain connection check error:",
             e
         )
 
