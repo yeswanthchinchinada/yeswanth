@@ -38,7 +38,7 @@ web3 = Web3(
 # ============================================================
 
 CONTRACT_ADDRESS = Web3.to_checksum_address(
-    "0x0539A968714bc20C2946e6dC9Ff88fbE2826e93e"
+    "0x66AC14113543eaCf77c146C0335b6F5dE57d10bb"
 )
 
 
